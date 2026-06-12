@@ -21,12 +21,19 @@ app.http("messages", {
     app.use(cors(corsOptions));
     app.use(express.json());
 
-    const PORT = process.env.PORT;
+      const PORT = process.env.PORT;
+      
+      app.get("/bloqueRespuesta", (req, res) => {
+          return res.status(200).json({
+            message:"recibido"
+        })  
+      })
 
     /* Routes */
     app.use("/api/model", RutasModelo);
     app.use("/api/redis", redisOptions);
-    app.use("/api/location", locationRouter);
+      app.use("/api/location", locationRouter);
+
 
     app.listen(PORT, () => {
       console.log("Escuchando en el puerto:", PORT);
