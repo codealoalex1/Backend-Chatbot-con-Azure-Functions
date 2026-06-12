@@ -1,0 +1,46 @@
+name: Desplegar Azure Function
+
+on:
+  push:
+    branches:
+      - main # Cambia esto si tu rama principal se llama diferente (ej. master)
+
+# Permisos obligatorios para la autenticación por OIDC
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Descargar el código del repositorio
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
+
+      # 2. Configurar el entorno (Ejemplo con Node.js, cámbialo si usas Python, .NET, etc.)
+      - name: 'Setup Node.js Environment'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24' # Ajusta a la versión que use tu función
+
+      # 3. Instalar dependencias y compilar (si aplica)
+      - name: 'Resolve Project Dependencies'
+        run: |
+          npm install
+          # npm run build --if-present (descomenta si usas TypeScript o necesitas compilar)
+
+      # 4. Autenticarse en Azure (La solución al error anterior)
+      - name: 'Az CLI login'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # 5. DESPLIEGUE DIRECTO A LA AZURE FUNCTION
+      - name: 'Run Azure Functions Action'
+        uses: azure/functions-action@v1
+        with:
+          app-name: 'backendchatbotcloud1' # Pon aquí el nombre exacto de tu Function en Azure
+          package: '.' # Sube todo el directorio actual
