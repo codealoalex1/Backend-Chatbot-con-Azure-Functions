@@ -2,6 +2,7 @@
   "name": "backend-func-azure",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "scripts": {
     "start": "func start",
     "test": "echo \"No tests yet...\""
@@ -10,5 +11,5 @@
     "@azure/functions": "^4.0.0"
   },
   "devDependencies": {},
-  "main": "src/{index.js,functions/*.js}"
+  "main": "src/index.js"
 }
