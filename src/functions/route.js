@@ -1,31 +1,35 @@
 import { app } from '@azure/functions';
 
-// Endpoint 1: Obtener usuarios (GET)
-app.http('getUsuarios', {
-    methods: ['GET'],
+app.http('raizUsuarios', {
+    methods: ['GET', 'POST'], // <--- Soporta ambos métodos
     authLevel: 'anonymous',
-    route: 'usuarios', // URL: /api/usuarios
+    route: 'usuarios',
     handler: async (request, context) => {
-        context.log('Procesando solicitud de usuarios...');
+        if (request.method === 'GET') {
+            return { jsonBody: { mensaje: "Aquí devuelves todos los usuarios" } };
+        }
         
-        const usuarios = [
-            { id: 1, nombre: 'Ana' },
-            { id: 2, nombre: 'Carlos' }
-        ];
-
-        return { jsonBody: usuarios };
+        if (request.method === 'POST') {
+            const body = await request.json();
+            return { status: 201, jsonBody: { mensaje: "Usuario creado", data: body } };
+        }
     }
 });
 
-// Endpoint 2: Crear usuario (POST) en el mismo archivo
-app.http('createUsuario', {
-    methods: ['POST'],
+app.http('usuariosConId', {
+    methods: ['GET', 'PUT', 'DELETE'], // <--- Soporta los tres
     authLevel: 'anonymous',
-    route: 'usuarios', // URL: /api/usuarios
+    route: 'usuarios/{id}',
     handler: async (request, context) => {
-        const body = await request.json();
-        context.log(`Usuario ${body.nombre} creado.`);
-        
-        return { status: 201, jsonBody: { creadocónÉxito: true } };
+        const id = request.params.id;
+
+        switch (request.method) {
+            case 'GET':
+                return { jsonBody: { id, nombre: "Usuario obtenido" } };
+            case 'PUT':
+                return { jsonBody: { id, mensaje: "Usuario actualizado" } };
+            case 'DELETE':
+                return { status: 204 };
+        }
     }
 });
