@@ -1,13 +1,31 @@
-import { app } from "@azure/functions";
+import { app } from '@azure/functions';
 
-app.http('route', {
-    methods: ['GET', 'POST'],
+// Endpoint 1: Obtener usuarios (GET)
+app.http('getUsuarios', {
+    methods: ['GET'],
     authLevel: 'anonymous',
+    route: 'usuarios', // URL: /api/usuarios
     handler: async (request, context) => {
-        context.log(`Http function processed request for url "${request.url}"`);
+        context.log('Procesando solicitud de usuarios...');
+        
+        const usuarios = [
+            { id: 1, nombre: 'Ana' },
+            { id: 2, nombre: 'Carlos' }
+        ];
 
-        const name = request.query.get('name') || await request.text() || 'world';
+        return { jsonBody: usuarios };
+    }
+});
 
-        return { body: `Hello, ${name}!` };
+// Endpoint 2: Crear usuario (POST) en el mismo archivo
+app.http('createUsuario', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    route: 'usuarios', // URL: /api/usuarios
+    handler: async (request, context) => {
+        const body = await request.json();
+        context.log(`Usuario ${body.nombre} creado.`);
+        
+        return { status: 201, jsonBody: { creadocónÉxito: true } };
     }
 });
